@@ -4,6 +4,7 @@ import (
 	"io/ioutil"
 	"net"
 	"os"
+	"strings"
 	"testing"
 	"time"
 
@@ -29,6 +30,7 @@ func TestAutoHosts(t *testing.T) {
 	defer f.Close()
 
 	_, _ = f.WriteString("  127.0.0.1   host  localhost  \n")
+	_, _ = f.WriteString("  ::1   localhost  \n")
 
 	ah.Init(f.Name())
 	ah.Start()
@@ -50,6 +52,13 @@ func TestAutoHosts(t *testing.T) {
 
 	ips = ah.Process("newhost", dns.TypeA)
 	assert.True(t, ips[0].Equal(net.ParseIP("127.0.0.2")))
+
+	a, _ := dns.ReverseAddr("127.0.0.1")
+	a = strings.TrimSuffix(a, ".")
+	assert.True(t, ah.ProcessReverse(a, dns.TypePTR) == "host")
+	a, _ = dns.ReverseAddr("::1")
+	a = strings.TrimSuffix(a, ".")
+	assert.True(t, ah.ProcessReverse(a, dns.TypePTR) == "localhost")
 
 	ah.Close()
 }
