@@ -7,6 +7,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/miekg/dns"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -34,9 +35,9 @@ func TestAutoHosts(t *testing.T) {
 	// wait until we parse the file
 	time.Sleep(50 * time.Millisecond)
 
-	ips := ah.Process("localhost")
+	ips := ah.Process("localhost", dns.TypeA)
 	assert.True(t, ips[0].Equal(net.ParseIP("127.0.0.1")))
-	ips = ah.Process("newhost")
+	ips = ah.Process("newhost", dns.TypeA)
 	assert.True(t, ips == nil)
 
 	table := ah.List()
@@ -47,8 +48,18 @@ func TestAutoHosts(t *testing.T) {
 	// wait until fsnotify has triggerred and processed the file-modification event
 	time.Sleep(50 * time.Millisecond)
 
-	ips = ah.Process("newhost")
+	ips = ah.Process("newhost", dns.TypeA)
 	assert.True(t, ips[0].Equal(net.ParseIP("127.0.0.2")))
 
 	ah.Close()
+}
+
+func TestIP(t *testing.T) {
+	assert.True(t, dnsUnreverseAddr("1.0.0.127.in-addr.arpa").Equal(net.ParseIP("127.0.0.1").To4()))
+	assert.True(t, dnsUnreverseAddr("4.3.2.1.d.c.b.a.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.ip6.arpa").Equal(net.ParseIP("::abcd:1234")))
+
+	assert.True(t, dnsUnreverseAddr("1.0.0.127.in-addr.arpa.") == nil)
+	assert.True(t, dnsUnreverseAddr(".0.0.127.in-addr.arpa") == nil)
+	assert.True(t, dnsUnreverseAddr(".3.2.1.d.c.b.a.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.ip6.arpa") == nil)
+	assert.True(t, dnsUnreverseAddr("4.3.2.1.d.c.b.a.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0..ip6.arpa") == nil)
 }
