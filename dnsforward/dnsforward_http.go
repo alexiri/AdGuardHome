@@ -30,6 +30,9 @@ type dnsConfigJSON struct {
 	EDNSCSEnabled     bool   `json:"edns_cs_enabled"`
 	DNSSECEnabled     bool   `json:"dnssec_enabled"`
 	DisableIPv6       bool   `json:"disable_ipv6"`
+	CacheSize		  uint32 `json:"cache_size"`
+	CacheMinTTL		  uint32 `json:"cache_ttl_min"`
+	CacheMaxTTL		  uint32 `json:"cache_ttl_max"`
 }
 
 func (s *Server) handleGetConfig(w http.ResponseWriter, r *http.Request) {
@@ -43,6 +46,9 @@ func (s *Server) handleGetConfig(w http.ResponseWriter, r *http.Request) {
 	resp.EDNSCSEnabled = s.conf.EnableEDNSClientSubnet
 	resp.DNSSECEnabled = s.conf.EnableDNSSEC
 	resp.DisableIPv6 = s.conf.AAAADisabled
+	resp.CacheSize = s.conf.CacheSize
+	resp.CacheMinTTL = s.conf.CacheMinTTL
+	resp.CacheMaxTTL = s.conf.CacheMaxTTL
 	s.RUnlock()
 
 	js, err := json.Marshal(resp)
@@ -127,6 +133,27 @@ func (s *Server) handleSetConfig(w http.ResponseWriter, r *http.Request) {
 
 	if js.Exists("disable_ipv6") {
 		s.conf.AAAADisabled = req.DisableIPv6
+	}
+
+	if js.Exists("cache_size") {
+		if s.conf.CacheSize != req.CacheSize {
+			restart = true
+		}
+		s.conf.CacheSize = req.CacheSize
+	}
+
+	if js.Exists("cache_ttl_min") {
+		if s.conf.CacheMinTTL != req.CacheMinTTL {
+			restart = true
+		}
+		s.conf.CacheMinTTL = req.CacheMinTTL
+	}
+
+	if js.Exists("cache_ttl_max") {
+		if s.conf.CacheMaxTTL != req.CacheMaxTTL {
+			restart = true
+		}
+		s.conf.CacheMaxTTL = req.CacheMaxTTL
 	}
 
 	s.Unlock()

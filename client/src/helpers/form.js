@@ -241,6 +241,13 @@ export const biggerOrEqualZero = (value) => {
     return false;
 };
 
+export const betweenZeroAnd3600 = (value) => {
+    if (value && (value < 0 || value > 3600)) {
+        return <Trans>form_error_0to3600</Trans>;
+    }
+    return false;
+};
+
 export const port = (value) => {
     if ((value || value === 0) && (value < 80 || value > 65535)) {
         return <Trans>form_error_port_range</Trans>;

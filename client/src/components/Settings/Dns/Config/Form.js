@@ -14,6 +14,7 @@ import {
     ipv6,
     biggerOrEqualZero,
     toNumber,
+    betweenZeroAnd3600,
 } from '../../../../helpers/form';
 import { BLOCKING_MODES } from '../../../../helpers/constants';
 
@@ -144,6 +145,63 @@ let Form = ({
                     </div>
                 </Fragment>
             )}
+            <div className="col-12 col-sm-6">
+                <div className="form__group form__group--settings">
+                    <label htmlFor="cache_size" className="form__label form__label--with-desc">
+                        <Trans>cache_size</Trans>
+                    </label>
+                    <div className="form__desc form__desc--top">
+                        <Trans>cache_size_desc</Trans>
+                    </div>
+                    <Field
+                        name="cache_size"
+                        type="number"
+                        component={renderInputField}
+                        className="form-control"
+                        placeholder={t('form_enter_cache_size')}
+                        normalize={toNumber}
+                        validate={[required, biggerOrEqualZero]}
+                    />
+                </div>
+            </div>
+            <div className="col-12 col-sm-6">
+                <div className="form__group form__group--settings">
+                    <label htmlFor="cache_ttl_min" className="form__label form__label--with-desc">
+                        <Trans>cache_ttl_min</Trans>
+                    </label>
+                    <div className="form__desc form__desc--top">
+                        <Trans>cache_ttl_min_desc</Trans>
+                    </div>
+                    <Field
+                        name="cache_ttl_min"
+                        type="number"
+                        component={renderInputField}
+                        className="form-control"
+                        placeholder={t('form_enter_cache_ttl_min')}
+                        normalize={toNumber}
+                        validate={[betweenZeroAnd3600]}
+                    />
+                </div>
+            </div>
+            <div className="col-12 col-sm-6">
+                <div className="form__group form__group--settings">
+                    <label htmlFor="cache_ttl_max" className="form__label form__label--with-desc">
+                        <Trans>cache_ttl_max</Trans>
+                    </label>
+                    <div className="form__desc form__desc--top">
+                        <Trans>cache_ttl_max_desc</Trans>
+                    </div>
+                    <Field
+                        name="cache_ttl_max"
+                        type="number"
+                        component={renderInputField}
+                        className="form-control"
+                        placeholder={t('form_enter_cache_ttl_max')}
+                        normalize={toNumber}
+                        validate={[biggerOrEqualZero]}
+                    />
+                </div>
+            </div>
         </div>
         <button
             type="submit"

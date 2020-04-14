@@ -46,6 +46,9 @@ const dnsConfig = handleActions(
         edns_cs_enabled: false,
         disable_ipv6: false,
         dnssec_enabled: false,
+        cache_size: 4 * 1024 * 1024,
+        cache_ttl_min: null,
+        cache_ttl_max: null,
     },
 );
 

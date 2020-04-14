@@ -19,6 +19,9 @@ const Config = ({ t, dnsConfig, setDnsConfig }) => {
         dnssec_enabled,
         disable_ipv6,
         processingSetConfig,
+        cache_size,
+        cache_ttl_min,
+        cache_ttl_max,
     } = dnsConfig;
 
     return (
@@ -37,6 +40,9 @@ const Config = ({ t, dnsConfig, setDnsConfig }) => {
                         edns_cs_enabled,
                         disable_ipv6,
                         dnssec_enabled,
+                        cache_size,
+                        cache_ttl_min,
+                        cache_ttl_max,
                     }}
                     onSubmit={handleFormSubmit}
                     processing={processingSetConfig}
